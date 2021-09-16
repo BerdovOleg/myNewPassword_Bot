@@ -4,7 +4,6 @@ import random
 import logging
 
 from telebot import types
-n = 1
 let = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
        "w", "x", "y", "z"]
 LET = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
@@ -56,26 +55,9 @@ f = open('key\API_KEY.txt', 'r')
 API_KEY = f.read()
 bot = telebot.TeleBot(API_KEY)
 
-def start(index, id, first_name, last_name):
+def start(command, id, first_name, last_name):
     d = datetime.datetime.now()
-    if index == 0:
-        s = 'Command: start, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 1:
-        s = 'Command: menu, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 2:
-        s = 'Command: help, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 3:
-        s = 'Command: website, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 4:
-        s = 'Command: getpass, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 5:
-        s = 'Command: getmediumpass, Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 6:
-        s = 'Command: getstrongpass, Chat id: ' + str(id) + ', User F_name: ' + str(
-            first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
-    if index == 7:
-        s = 'Command: gethardpass, Chat id: ' + str(id) + ', User F_name: ' + str(
-            first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
+    s = 'Command: ' + command + ', Chat id: '+ str(id) + ', User F_name: ' + str(first_name) + ', User L_name: ' + str(last_name) + ', DateTime:' + str(d)
     print(s)
     f = open('logs\login.txt','a')
     f.write(s + '\n')
@@ -84,7 +66,7 @@ def start(index, id, first_name, last_name):
 
 @bot.message_handler(commands=['website'])
 def open_website(message):
-    start(3, message.chat.id, message.from_user.first_name, message.from_user.last_name)
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text="GIT", url="https://github.com/BerdovOleg/myNewPassword_Bot"))
     bot.send_message(message.chat.id, "Отлично просто нажми на кнопку!", parse_mode='html',reply_markup=markup)
@@ -92,15 +74,19 @@ def open_website(message):
 @bot.message_handler(commands=['start'])
 def strart(message):
     try:
-        start(0, message.chat.id, message.from_user.first_name, message.from_user.last_name)
+        start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     except Exception as e:
         logging.error("Exception occurred", exc_info=True)
-    send_mess = f"<b> Привет {message.from_user.first_name} {message.from_user.last_name}</b>!\nЭтот бот генерирует для тебя случайные пароли! \nДля получения нового пароля напиши /menu"
+    send_mess = f"<b> Привет {message.from_user.first_name} {message.from_user.last_name}</b>!" \
+                f"\nЭтот бот генерирует для тебя случайные пароли! " \
+                f"\nДля получения нового пароля напиши /menu " \
+                f"\n<b>Внимание! Генерируемые пароли рекомендуется использовать как временное решение. " \
+                f"\nДанный пароль не рекомендуется использовать для авторизации в сервисах с важной для Вас информацией. </b>"
     bot.send_message(message.chat.id, send_mess, parse_mode='html')
 
 @bot.message_handler(commands=['help'])
 def strart(message):
-    start(2, message.chat.id, message.from_user.first_name, message.from_user.last_name)
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     send_mess = f"<b> /start для начала работы с ботом;" \
          f"\n/getpass генерация стандартного нового пароля;" \
          f"\n/getmediumpass генерация средней сложности пароля нового пароля;" \
@@ -112,11 +98,7 @@ def strart(message):
 
 @bot.message_handler(commands=['menu'])
 def strart(message):
-    start(1, message.chat.id, message.from_user.first_name, message.from_user.last_name)
-    try:
-        print('2')
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     send_mess = f"<b>/getpass генерация стандартного нового пароля;" \
          f"\n/getmediumpass генерация средней сложности пароля нового пароля;" \
          f"\n/getstrongpass генерация сложного пароля;"\
@@ -126,6 +108,7 @@ def strart(message):
 
 @bot.message_handler(commands=['getpass'])
 def strart(message):
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     s = ""
     try:
         s = GetMePassword(8,0,1,2,1,0)
@@ -137,6 +120,7 @@ def strart(message):
 
 @bot.message_handler(commands=['getmediumpass'])
 def strart(message):
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     s = ""
     try:
         s = GetMePassword(11,1,1,3,1,0)
@@ -147,6 +131,7 @@ def strart(message):
 
 @bot.message_handler(commands=['getstrongpass'])
 def strart(message):
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     s = ""
     try:
         s = GetMePassword(13,1,1,3,1,3)
@@ -157,6 +142,7 @@ def strart(message):
 
 @bot.message_handler(commands=['gethardgpass'])
 def strart(message):
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
     s = ""
     try:
         s = GetMePassword(16,1,1,3,1,3)
@@ -167,6 +153,7 @@ def strart(message):
 
 @bot.message_handler(func=lambda m: True)
 def echo_all(message):
-	bot.reply_to(message, message.text)
+    start(message.text, message.chat.id, message.from_user.first_name, message.from_user.last_name)
+    bot.reply_to(message, message.text)
 
 bot.polling(none_stop=True)
